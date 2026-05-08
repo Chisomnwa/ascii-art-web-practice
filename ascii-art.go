@@ -7,34 +7,49 @@ import (
 )
 
 func asciiArt(text, banner string) string {
-	// banner = "standard"
+	// Make sure the user chooses the correct banner
 	valid := banner == "standard" || banner == "thinkertoy" || banner == "shadow"
 	if !valid {
 		fmt.Println("wrong banner usage")
 		return ""
 	}
 
+	// Read the content of the banner file
 	content, err := os.ReadFile(banner + ".txt")
 	if err != nil {
-		fmt.Println("error reading file:", err)
+		fmt.Println("error reading file: ", err)
 		return ""
 	}
+
 	data := strings.Split(string(content), "\n")
 
+	// Now, work on the string so we can be able to manipulate it
 	inputText := strings.ReplaceAll(text, "\\n", "\n")
 	wordSlice := strings.Split(inputText, "\n")
 
-	var res string
+	// Create a variable that will hold our final result
+	var result strings.Builder
 
-	for _, words := range wordSlice {
-		for i := 0; i < 8; i++ {
-			for _, char := range words {
-				ascidx := int(char-' ')*9 + 1 + i
-				charidx := data[ascidx]
-				res += charidx
+	// Loop through eah word, through each character of each word
+	// And store their ascii character in response
+	for i, word := range wordSlice {
+		// To avoid unncessary new line at the beginning
+		if word == "" {
+			if i != 0 {
+				result.WriteString("\n")
+				continue
 			}
-			res += "\n"
 		}
+
+		for i := 0; i < len(word); i++ {
+			for _, char := range word {
+				asciiIndex := int(char - ' ') * 9 + 1 + i
+				charIndex := data[asciiIndex]
+				result.WriteString(charIndex)
+			}
+			result.WriteString("\n")
+		}
+		}
+		return result.String()
 	}
-	return res
-}
+	
