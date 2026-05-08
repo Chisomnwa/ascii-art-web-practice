@@ -6,19 +6,19 @@ import (
 	"strings"
 )
 
-func asciiArt(text, banner string) string {
+func AsciiArt(text, banner string) (string, error) {
 	// Make sure the user chooses the correct banner
 	valid := banner == "standard" || banner == "thinkertoy" || banner == "shadow"
 	if !valid {
 		fmt.Println("wrong banner usage")
-		return ""
+		return "", fmt.Errorf("invalid banner")
 	}
 
 	// Read the content of the banner file
 	content, err := os.ReadFile(banner + ".txt")
 	if err != nil {
 		fmt.Println("error reading file: ", err)
-		return ""
+		return "", fmt.Errorf("Cannot read banner file")
 	}
 
 	data := strings.Split(string(content), "\n")
@@ -50,6 +50,6 @@ func asciiArt(text, banner string) string {
 			result.WriteString("\n")
 		}
 		}
-		return result.String()
+		return result.String(), nil
 	}
 	
