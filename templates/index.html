@@ -23,7 +23,9 @@
         <button type="submit">Generate</button>
     </form>
 
-    
+    {{if .Result}}
+        <pre>{{.Result}}</pre>
+    {{end}}
 
 </body>
 </html>
