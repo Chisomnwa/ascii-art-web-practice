@@ -6,7 +6,12 @@ import (
 	"net/http"
 )
 
-func homeHandler(w http.ResponseWriter, r *http.Request) {
+/*
+homeHandler reads the index.html file from disk, compiles it, and
+sends it to the browser. When a user visits the home page, they 
+receive the HTML form for entering text and selecting a banner.
+*/
+func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	// Reject anything that isn't exactly "/"
 	if r.URL.Path != "/" {
 		http.Error(w, "404 Not found", http.StatusNotFound)
@@ -29,8 +34,44 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, nil)
 }
 
+/*
+AsciiArtHandler essentially processes the form submission and returns the result:
+	- It recieves data from the POST request (the text the user typed and the
+	  banner they selected),
+	- Calls the AsciiArt() function to generate the ASCII art
+	- Loads the index.html template
+	- Inserts the genrated ASCII art into the template
+	- Sends the complete HTML page (with the ASCII art displayed) back to the browser
+*/
+func AsciiArtHandler(w http.ResponseWriter, r *http.Request) {
+	// Parses the form data from the post request body
+	// Must be called before reading any form values
+	r.ParseForm()
+
+	// Debugging lines to confirm the data that came in
+	fmt.Println("In ascii art handler", r.Form)
+	fmt.Println("Post form values:", r.PostForm)
+
+	// Retrieve the form values
+	inputText := r.Form.Get("inputText")
+	banner := r.Form.Get("banner")
+
+	result, err := AsciiArt(inputText, banner)
+	// Gives the user a prope rreponse instead of a blank page
+	// Pulls the error messages rom the AsciiArt function
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadGateway)
+	}
+
+	// STOPPED HERE!!!!
+
+
+
+}
+
+
 func main() {
-	http.HandleFunc("/", homeHandler)
+	http.HandleFunc("/", HomeHandler)
 	
 	fmt.Println("Server starting on port 8080...")
 	err := http.ListenAndServe(":8080", nil)
