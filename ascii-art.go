@@ -33,7 +33,7 @@ func asciiArt(text, banner string) string {
 	// Loop through eah word, through each character of each word
 	// And store their ascii character in response
 	for i, word := range wordSlice {
-		// To avoid unncessary new line at the beginning
+		// To avoid unncessary leading blank line
 		if word == "" {
 			if i != 0 {
 				result.WriteString("\n")
